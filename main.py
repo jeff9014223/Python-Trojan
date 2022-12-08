@@ -9,12 +9,23 @@ API_URL = "http://discord.com/api"
 WS_URL = "wss://gateway.discord.gg"
 GUILD_ID = os.getenv("GUILD_ID")
 
+async def on_message(ws, message):
+    print(message)
+
+async def send_hearbeat(ws, interval):
+    while True:
+        ws.send(json.dumps({
+            "op": 1,
+            "d": None
+        }))
+        await asyncio.sleep(interval)
+
 async def main():
     session = requests.Session()
     session.headers.update({
         "Authorization": f"Bot {TOKEN}"
     })
-    channel_id = session.post(f"{API_URL}/channels", json={
+    channel_id = session.post(f"{API_URL}/guilds/{GUILD_ID}/channels", json={
         "name": SESSION_ID,
         "type": 0
     }).json()
