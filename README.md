@@ -3,6 +3,21 @@
 An Python Remote Administration Tool that works on Discord.
 Supports multiple exploitation commands.
 
+# Features
+
+    !help - Help command
+    !ping - Ping command
+    !cd - Change directory
+    !ls - List directory
+    !download - Download file
+    !upload - Upload file
+    !shell - Execute shell command
+    !run - Run an file
+    !exit - Exit the session
+    !screenshot - Take a screenshot
+    !record <seconds> - Record the screen
+    !tokens - Get all discord tokens
+
 # Setup
 
 Create an .env file in the main directory and paste your discord-token and guild id in like this:
