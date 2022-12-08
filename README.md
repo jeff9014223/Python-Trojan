@@ -7,7 +7,7 @@ Supports multiple exploitation commands.
 
 Create an .env file in the main directory and paste your discord-token and guild id in like this:
 
-```env
+```yaml
 TOKEN=your discord token here
 GUILD_ID=your guild id of your command server
 ```
