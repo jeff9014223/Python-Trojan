@@ -7,7 +7,7 @@ Supports multiple exploitation commands.
 
     !help - Help command
     !ping - Ping command
-    !cd - Change directory
+    !cd <path> - Change directory
     !ls - List directory
     !download - Download file
     !upload - Upload file
