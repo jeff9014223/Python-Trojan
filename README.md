@@ -20,9 +20,15 @@ Supports multiple exploitation commands.
 
 # Setup
 
+Installing required packages
+
+```bash
+pip install -r requirements.txt
+```
+
 Create an .env file in the main directory and paste your discord-token and guild id in like this:
 
-```conf
+```python
 TOKEN=your discord token here
 GUILD_ID=your guild id of your command server
 ```
