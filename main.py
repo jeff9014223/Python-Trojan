@@ -12,7 +12,7 @@ GUILD_ID = os.getenv("GUILD_ID")
 async def on_message(ws, message):
     print(message)
 
-async def send_hearbeat(ws, interval):
+async def send_heartbeat(ws, interval):
     while True:
         ws.send(json.dumps({
             "op": 1,
