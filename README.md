@@ -12,7 +12,7 @@ TOKEN=your discord token here
 GUILD_ID=your guild id of your command server
 ```
 
-# Compiling to Executable
+# Compiling to an Executable
 
 To compile this tool to an executable please install an Python compiler like nuitka, pyinstaller or pyarmor pack.
 Here is an example of compiling with Pyinstaller
