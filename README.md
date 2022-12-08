@@ -11,7 +11,7 @@ Supports multiple exploitation commands.
     !ls - List directory
     !download - Download file
     !upload - Upload file
-    !shell - Execute shell command
+    !shell <ps> - Execute shell command
     !run - Run an file
     !exit - Exit the session
     !screenshot - Take a screenshot
