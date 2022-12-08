@@ -5,7 +5,7 @@ load_dotenv()
 
 SESSION_ID = os.urandom(8).hex()
 TOKEN = os.getenv("TOKEN")
-API_URL = "http://discord.com/api"
+API_URL = "https://discord.com/api"
 WS_URL = "wss://gateway.discord.gg"
 GUILD_ID = os.getenv("GUILD_ID")
 
@@ -28,7 +28,7 @@ async def main():
     channel_id = session.post(f"{API_URL}/guilds/{GUILD_ID}/channels", json={
         "name": SESSION_ID,
         "type": 0
-    }).json()
+    }).json()["id"]
     ws = websocket.create_connection(f"{WS_URL}/?v=6&encoding=json")
     ws.send(json.dumps({
         "op": 2,
@@ -41,6 +41,5 @@ async def main():
             }
         }
     }))
-    print(channel_id)
 
 asyncio.run(main())
