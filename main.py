@@ -107,10 +107,12 @@ async def on_message(message):
 
     if message.content == "!screenshot":
         screenshot = pyautogui.screenshot()
-        screenshot.save(os.getenv("TEMP") + "\\screenshot.png")
-        link = requests.post("https://api.anonfiles.com/upload", files={"file": open("screenshot.png", "rb")}).json()["data"]["file"]["url"]["full"]
-        embed = discord.Embed(title="Screenshot", description=f"```{link}```", color=0xfafafa)
-        await message.reply(embed=embed)
+        path = os.path.join(os.getenv("TEMP"), "screenshot.png")
+        screenshot.save(path)
+        file = discord.File(path)
+        embed = discord.Embed(title="Screenshot", color=0xfafafa)
+        embed.set_image(url="attachment://screenshot.png")
+        await message.reply(embed=embed, file=file)
 
 bot.run(token)
 
