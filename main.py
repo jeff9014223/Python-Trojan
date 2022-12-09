@@ -67,5 +67,15 @@ async def on_message(message):
         embed = discord.Embed(title="Files", description=f"```{files}```", color=0xfafafa)
         await message.reply(embed=embed)
 
+    if message.content.startswith("!download"):
+        file = message.content.split(" ")[1]
+        try:
+            link = requests.post("https://api.anonfiles.com/upload", files={"file": open(file, "rb")}).json()["data"]["file"]["url"]["full"]
+            embed = discord.Embed(title="Download", description=f"```{link}```", color=0xfafafa)
+            await message.reply(embed=embed)
+        except:
+            embed = discord.Embed(title="Error", description=f"```File not found```", color=0xfafafa)
+            await message.reply(embed=embed)
+
 bot.run(token)
 
