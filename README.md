@@ -12,7 +12,7 @@ Supports multiple exploitation commands.
     !download <file> - Download file
     !upload <link> - Upload file
     !shell <ps> - Execute shell command
-    !run - Run an file
+    !run <file> - Run an file
     !exit - Exit the session
     !screenshot - Take a screenshot
     !record <seconds> - Record the screen
