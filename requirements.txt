@@ -2,3 +2,4 @@ discord.py
 requests
 python-dotenv
 pyautogui
+pillow
