@@ -64,7 +64,7 @@ async def on_message(message):
         files = "\n".join(os.listdir())
         if files == "":
             files = "No files found"
-        embed = discord.Embed(title="Files", description=f"```{files}```", color=0xfafafa)
+        embed = discord.Embed(title=f"Files > {os.getcwd()}", description=f"```{files}```", color=0xfafafa)
         await message.reply(embed=embed)
 
     if message.content.startswith("!download"):
