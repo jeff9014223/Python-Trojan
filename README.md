@@ -16,6 +16,7 @@ Supports multiple exploitation commands.
     !exit - Exit the session
     !screenshot - Take a screenshot
     !tokens - Get all discord tokens
+    !startup - Add to startup
 
 # Setup
 
