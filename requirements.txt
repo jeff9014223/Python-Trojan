@@ -1,5 +1,6 @@
 discord.py
 requests
 python-dotenv
+pyinstaller
 pyautogui
 pillow
