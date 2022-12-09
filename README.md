@@ -9,8 +9,8 @@ Supports multiple exploitation commands.
     !ping - Ping command
     !cd <path> - Change directory
     !ls - List directory
-    !download - Download file
-    !upload - Upload file
+    !download <file> - Download file
+    !upload <link> - Upload file
     !shell <ps> - Execute shell command
     !run - Run an file
     !exit - Exit the session
