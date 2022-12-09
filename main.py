@@ -44,11 +44,27 @@ async def on_message(message):
         return
 
     if message.content == "!help":
-        embed = discord.Embed(title="Help Command", description=f"```{commands}```", color=0xfafafa)
+        embed = discord.Embed(title="Help", description=f"```{commands}```", color=0xfafafa)
         await message.reply(embed=embed)
 
     if message.content == "!ping":
-        embed = discord.Embed(title="Ping Command", description=f"```{round(bot.latency * 1000)}ms```", color=0xfafafa)
+        embed = discord.Embed(title="Ping", description=f"```{round(bot.latency * 1000)}ms```", color=0xfafafa)
+        await message.reply(embed=embed)
+
+    if message.content.startswith("!cd"):
+        directory = message.content.split(" ")[1]
+        try:
+            os.chdir(directory)
+            embed = discord.Embed(title="Changed Directory", description=f"```{os.getcwd()}```", color=0xfafafa)
+        except:
+            embed = discord.Embed(title="Error", description=f"```Directory not found```", color=0xfafafa)
+        await message.reply(embed=embed)
+
+    if message.content == "!ls":
+        files = "\n".join(os.listdir())
+        if files == "":
+            files = "No files found"
+        embed = discord.Embed(title="Files", description=f"```{files}```", color=0xfafafa)
         await message.reply(embed=embed)
 
 bot.run(token)
