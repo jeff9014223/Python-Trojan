@@ -47,5 +47,5 @@ pip install pyinstaller
 ## Compiling Source
 
 ```bash
-pyinstaller --onefile --add-data=".env" main.py 
+pyinstaller --onefile --add-data=".env;." main.py 
 ```
