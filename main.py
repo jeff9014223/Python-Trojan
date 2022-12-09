@@ -19,7 +19,6 @@ commands = "\n".join([
     "!run <file> - Run an file",
     "!exit - Exit the session",
     "!screenshot - Take a screenshot",
-    "!record <seconds> - Record the screen",
     "!tokens - Get all discord tokens"
 ])
 
