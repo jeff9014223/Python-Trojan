@@ -27,7 +27,7 @@ pip install -r requirements.txt
 ```
 ## Creating Server
 
-Create a new discord server and copy the guild id, if you don't know how to get the guild id please follow [This tutorial](https://en.wikipedia.org/wiki/Template:Discord_Channel#:~:text=Getting%20Channel%2FGuild%20ID,to%20get%20the%20guild%20ID.)
+Create a new discord server and copy the guild id, if you don't know how to get the guild id please [read this](https://en.wikipedia.org/wiki/Template:Discord_Channel#:~:text=Getting%20Channel%2FGuild%20ID,to%20get%20the%20guild%20ID.)
 
 ## Creating the bot
 
