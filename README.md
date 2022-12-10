@@ -25,11 +25,17 @@ Supports multiple exploitation commands.
 ```bash
 pip install -r requirements.txt
 ```
+## Creating Server
+
+Create a new discord server and copy the guild id, if you don't know how to get the guild id please follow [This tutorial](https://en.wikipedia.org/wiki/Template:Discord_Channel#:~:text=Getting%20Channel%2FGuild%20ID,to%20get%20the%20guild%20ID.)
 
 ## Creating the bot
 
 Please go to [Discord Developer Portal](https://discord.com/developers/applications) and create an New Application,
-then you need to enter a name like C2 or C&C server. go to Bot in the left sidebar, Press Add Bot Reset The token and put it in [Configuration](#configuration)
+then you need to enter a name like C2 or C&C server. go to Bot in the left sidebar, Press Add Bot Reset The token and put it in [Configuration](#configuration).
+Scroll down to the bottom until you see ``MESSAGE CONTENT INTENT`` enable it and press on OAuth2 in the left sidebar, and then URL Generator press bot and below Administrator,
+copy the link ad the bottom and paste it in your webbrowser to invite the bot to your server.
+
 
 ## Configuration
 
