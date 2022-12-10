@@ -1,13 +1,11 @@
-import os, discord, subprocess, requests, pyautogui, re, shutil
-from dotenv import load_dotenv
+import os, discord, subprocess, requests, pyautogui, re, shutil, json
 
-load_dotenv()
-
+config = json.loads(open("config.json", "r"))
 intents = discord.Intents.all()
 bot = discord.Client(intents=intents)
 session_id = os.urandom(8).hex()
-token = os.getenv("TOKEN")
-guild_id = os.getenv("GUILD_ID")
+token = config["token"]
+guild_id = config["guild_id"]
 commands = "\n".join([
     "!help - Help command",
     "!ping - Ping command",
