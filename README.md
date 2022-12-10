@@ -28,7 +28,8 @@ pip install -r requirements.txt
 
 ## Creating the bot
 
-Please go to [Discord Developer Portal](https://discord.com/developers/applications)
+Please go to [Discord Developer Portal](https://discord.com/developers/applications) and create an New Application,
+then you need to enter a name like C2 or C&C server. go to Bot in the left sidebar, Press Add Bot Reset The token and put it in [Configuration](##configuration)
 
 ## Configuration
 
