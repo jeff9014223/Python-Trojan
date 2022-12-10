@@ -26,11 +26,14 @@ Installing required packages
 pip install -r requirements.txt
 ```
 
-Create an .env file in the main directory and paste your discord-token and guild id in like this:
+Open config.json and fill in your discord token and guild id,
+DM me on ``Jeff_#2475`` for help. Example shown below.
 
-```python
-TOKEN=your discord token here
-GUILD_ID=your guild id of your command server
+```json
+{
+    "token": "Youre discord bot token",
+    "guild_id": "The guild id of the C2 server"
+}
 ```
 
 # Compiling to an Executable
@@ -47,5 +50,5 @@ pip install pyinstaller
 ## Compiling Source
 
 ```bash
-pyinstaller --onefile --add-data=".env;." main.py 
+pyinstaller --onefile --add-data="config.json;." main.py 
 ```
