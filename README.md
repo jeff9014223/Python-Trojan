@@ -20,18 +20,24 @@ Supports multiple exploitation commands.
 
 # Setup
 
-Installing required packages
+## Installing required packages
 
 ```bash
 pip install -r requirements.txt
 ```
+
+## Creating the bot
+
+Please go to [Discord Developer Portal](https://discord.com/developers/applications)
+
+## Configuration
 
 Open config.json and fill in your discord token and guild id,
 DM me on ``Jeff_#2475`` for help. Example shown below.
 
 ```json
 {
-    "token": "Youre discord bot token",
+    "token": "Your discord bot token",
     "guild_id": "The guild id of the C2 server"
 }
 ```
