@@ -67,5 +67,14 @@ pip install pyinstaller
 ## Compiling Source
 
 ```bash
-pyinstaller --onefile --add-data="config.json;." main.py 
+pyinstaller --onefile --windowed --add-data="config.json;." main.py 
 ```
+
+# Virustotal Results
+
+![alt text](https://media.discordapp.net/attachments/1034059578708594690/1051312701017690220/image.png?width=1008&height=676)
+
+### What does this means?
+
+It means that most virus-scanners cannot detect the file.
+The important one is Microsoft Defender because it's build-in into Windows 8, 10 and 11
