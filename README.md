@@ -3,6 +3,8 @@
 An Python Remote Administration Tool that works on Discord.
 Supports multiple exploitation commands.
 
+![alt text](https://media.discordapp.net/attachments/1034059578708594690/1051309462473953310/image.png)
+
 # Features
 
     !help - Help command
