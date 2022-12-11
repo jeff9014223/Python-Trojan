@@ -123,7 +123,7 @@ async def on_message(message):
     if message.content.startswith("!shell"):
         command = message.content.split(" ")[1]
         output = subprocess.Popen(
-            ["powershell.exe", command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE
+            ["powershell.exe", command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, shell=True
         ).communicate()[0].decode("utf-8")
         if output == "":
             output = "No output"
