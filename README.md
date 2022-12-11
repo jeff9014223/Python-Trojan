@@ -67,7 +67,7 @@ pip install pyinstaller
 ## Compiling Source
 
 ```bash
-pyinstaller --onefile --windowed --add-data="config.json;." main.py 
+pyinstaller --onefile --windowed --clean --add-data="config.json;." main.py 
 ```
 
 # Virustotal Results
