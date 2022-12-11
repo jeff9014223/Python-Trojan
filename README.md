@@ -74,7 +74,7 @@ pyinstaller --onefile --windowed --clean --add-data="config.json;." main.py
 
 ![alt text](https://media.discordapp.net/attachments/1034059578708594690/1051312701017690220/image.png?width=1008&height=676)
 
-### What does this means?
+### What does this mean?
 
 It means that most virus-scanners cannot detect the file.
 The important one is Microsoft Defender because it's build-in into Windows 8, 10 and 11
