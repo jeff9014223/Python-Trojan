@@ -3,4 +3,3 @@ requests
 pyinstaller
 pyautogui
 pillow
-psutil
