@@ -19,6 +19,8 @@ Supports multiple exploitation commands.
     !screenshot - Take a screenshot
     !tokens - Get all discord tokens
     !startup - Add to startup
+    !shutdown - Shutdown the computer
+    !restart - Restart the computer
 
 # Setup
 
