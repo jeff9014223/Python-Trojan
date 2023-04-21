@@ -1,4 +1,4 @@
-import os, discord, subprocess, requests, re, shutil, json, sys, winreg
+import os, discord, subprocess, requests, re, json, sys
 from PIL import ImageGrab
 
 def get_processor():
