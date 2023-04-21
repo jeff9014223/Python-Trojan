@@ -1,5 +1,4 @@
-discord.py
+py-cord
 requests
 pyinstaller
-pyautogui
 pillow
