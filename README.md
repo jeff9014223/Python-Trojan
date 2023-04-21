@@ -78,3 +78,28 @@ pip install pyinstaller
 ```bash
 pyinstaller --onefile --windowed --clean --add-data="config.json;." main.py 
 ```
+
+# Contributing
+
+Contributions to this Python Trojan project are welcome and encouraged! Here are some guidelines for contributing:
+
+1. Fork the repository and create a new branch for your contribution.
+2. Make your changes or additions to the codebase.
+3. Test your changes to ensure they work as expected.
+4. Update the README with any relevant changes or additions, including documentation on new features or functionality.
+5. Submit a pull request with your changes, describing the purpose and scope of your contribution.
+
+When contributing to this project, please keep in mind the following:
+
+- Follow the Python coding style guidelines and best practices.
+- Avoid introducing any malicious or harmful code.
+- Be respectful and considerate towards other contributors and maintainers.
+- Provide clear and detailed descriptions of your changes or additions in your pull request.
+
+By contributing to this project, you are acknowledging and agreeing that your contributions will be licensed under the same license as the original project.
+
+Thank you for considering contributing to this Python Trojan project! Your contributions are valuable and appreciated.
+
+# License
+
+Python-Trojan is released under the MIT License. See `LICENSE` for more information.
