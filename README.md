@@ -1,4 +1,4 @@
-# PythonRemote
+# Python-Trojan
 
 An Python Remote Administration Tool that works on Discord.
 Supports multiple exploitation commands.
