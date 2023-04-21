@@ -102,4 +102,4 @@ Thank you for considering contributing to this Python Trojan project! Your contr
 
 # License
 
-Python-Trojan is released under the MIT License. See `LICENSE` for more information.
+Python-Trojan is released under the GPL-3 License. See `LICENSE` for more information.
