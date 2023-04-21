@@ -3,6 +3,15 @@
 An Python Remote Administration Tool that works on Discord.
 Supports multiple exploitation commands.
 
+# Discord Tokens
+
+Due to a client update by Discord in 2022, most Token Grabbers are no longer effective.
+However, this tool is designed to crack Discord's updated encryption.
+
+# Browser Passwords
+
+This tool is capable of extracting passwords from contemporary web browsers.
+
 ![alt text](https://media.discordapp.net/attachments/1034059578708594690/1051309462473953310/image.png)
 
 # Features
