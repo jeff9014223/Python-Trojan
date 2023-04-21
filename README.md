@@ -55,7 +55,7 @@ DM me on ``Jeff_#2475`` for help. Example shown below.
 }
 ```
 
-# Compiling to an Executable
+# Compiling to an Executable (.exe)
 
 To compile this tool to an executable please install an Python compiler like nuitka, pyinstaller or pyarmor pack.
 Here is an example of compiling with Pyinstaller
