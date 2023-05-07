@@ -1,6 +1,6 @@
 # Python-Trojan
 
-An Python Remote Administration Tool that works on Discord.
+A Python Remote Administration Tool that works on Discord.
 Supports multiple exploitation commands.
 
 # Discord Tokens
